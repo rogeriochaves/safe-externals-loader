@@ -1,9 +1,6 @@
-// var jQuery = require('jquery');
-//
-// jQuery('#result').html('jQuery is working!');
+var secondDependency = require('./secondDependency');
+var jQuery = require('jquery');
 
-/* parsed */
+secondDependency();
 
-(function (callback) { window['jQuery'] ? callback(window['jQuery']) : require(['jquery'], callback); })(function (jQuery) {
-  jQuery('#result').html('jQuery is working!');
-});
+console.log('jquery being used:', jQuery);
