@@ -20,7 +20,6 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      exclude: /node_modules/,
       loader: 'safe-externals-loader',
       query: JSON.stringify(safeExternals)
     }]

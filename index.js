@@ -23,7 +23,7 @@ var findEntry = function (module) {
 
 var replaceRequiresWithGlobals = function (externals, source) {
   return Object.keys(externals).reduce(function (source, external) {
-    var regex = new RegExp('((var|let|const)[\\s\\S]+?=[\\s\\S]+?)require\\([\'"`]' + external + '[\'"`]\\)', 'g');
+    var regex = new RegExp('((var|let|const).+?= *)require\\([\'"`]' + external + '[\'"`]\\)', 'g');
 
     var windowRequires = getFromWindowNames(externals[external]);
     return source.replace(regex, '$1' + windowRequires.replace('$', '$$$$'));
