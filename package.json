@@ -1,0 +1,27 @@
+{
+  "name": "safe-externals-loader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogeriochaves/safe-externals-loader.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rogeriochaves/safe-externals-loader/issues"
+  },
+  "homepage": "https://github.com/rogeriochaves/safe-externals-loader#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "js-beautify": "^1.6.11",
+    "mocha": "^3.2.0"
+  }
+}

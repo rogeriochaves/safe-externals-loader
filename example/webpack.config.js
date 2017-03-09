@@ -6,7 +6,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.js$/, loader: "../loader.js" }
+            { test: /\.js$/, loader: "../index.js" }
         ]
     }
 };

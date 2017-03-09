@@ -1,7 +1,6 @@
 var path = require("path");
 
-module.exports = function(source) {
-  var updatedSource;
+module.exports = function (source) {
   this.cacheable();
 
   var isTheEntryPoint = this._module.userRequest === findEntry(this._module);
@@ -14,12 +13,17 @@ module.exports = function(source) {
   return updatedSource;
 };
 
-var findEntry = function (mod) {
-  if (mod.reasons.length > 0) {
-    return findEntry(mod.reasons[0].module);
+var findEntry = function (module) {
+  if (module.reasons.length > 0) {
+    return findEntry(module.reasons[0].module);
   }
-  return mod.resource;
-}
+  return module.resource;
+};
+
+var replaceRequiresWithGlobals = function (source) {
+  var regex = /((var|let|const)[\s\S]+?=[\s\S]+?)require\(['"`]jquery['"`]\)/;
+  return source.replace(regex, "$1window['jQuery']");
+};
 
 var addExternalRequires = function (source) {
   var requires = `
@@ -31,8 +35,3 @@ var addExternalRequires = function (source) {
   var closing = '});';
   return requires + source + closing;
 };
-
-var replaceRequiresWithGlobals = function (source) {
-  var regex = /((var|let|const)[\s\S]+?=[\s\S]+?)require\(['"`]jquery['"`]\)/;
-  return source.replace(regex, "$1window['jQuery']");
-}
