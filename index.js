@@ -25,9 +25,15 @@ var replaceRequiresWithGlobals = function (externals, source) {
   return Object.keys(externals).reduce(function (source, external) {
     var regex = new RegExp('((var|let|const)[\\s\\S]+?=[\\s\\S]+?)require\\([\'"`]' + external + '[\'"`]\\)', 'g');
 
-    var windowName = externals[external];
-    return source.replace(regex, "$1window['" + windowName[0] + "']");
+    var windowRequires = getFromWindowNames(externals[external]);
+    return source.replace(regex, '$1' + windowRequires.replace('$', '$$$$'));
   }, source);
+};
+
+var getFromWindowNames = function (windowNames) {
+  return windowNames.map(function (windowName) {
+    return "window['" + windowName + "']";
+  }).join(' || ');
 };
 
 var addExternalRequires = function (externals, source) {
@@ -43,17 +49,25 @@ var imports = []; \
 
 var createImports = function (externals) {
   return Object.keys(externals).map(function (external) {
-    var windowName = externals[external];
+    var windowNames = externals[external];
+    var windowRequires = getFromWindowNames(windowNames);
+    var windowSets = setWindowNames(windowNames);
 
     return "\
-      if (!window['" + windowName[0] + "']) \
+      if (!("+ windowRequires +")) \
         imports.push( \
           System.import('" + external + "').then( \
             function (result) { \
-              window['" + windowName[0] + "'] = result; \
+              " + windowSets + "; \
             } \
           ) \
         ); \
     "
   }).join('\n');
+};
+
+var setWindowNames = function (windowNames) {
+  return windowNames.map(function (windowName) {
+    return "window['" + windowName + "'] = result";
+  }).join(';');
 };
