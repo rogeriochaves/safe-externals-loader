@@ -5,7 +5,8 @@ const loader = require('../index');
 describe('Safe Externals Loader', () => {
   let webpackLoaderApiMock = {
     cacheable: () => {},
-    _module: { userRequest: 'foo', reasons: [], resource: 'bar' }
+    _module: { userRequest: 'foo', reasons: [], resource: 'bar' },
+    query: '?' + JSON.stringify({jquery: ['jQuery']})
   };
 
   it('replaces requires to jquery with window jquery object', () => {
@@ -27,7 +28,6 @@ describe('Safe Externals Loader', () => {
     const expected = `
       var imports = [];
       if (!window['jQuery']) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));
-
       Promise.all(imports).then(function () {
         console.log('foo');
       });
