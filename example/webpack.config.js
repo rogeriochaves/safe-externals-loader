@@ -1,6 +1,6 @@
 const safeExternals = {
   jquery: ['jQuery', '$'],
-  react: ['react']
+  react: ['React']
 };
 
 module.exports = {
@@ -12,6 +12,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
+      exclude: /node_modules/,
       loader: '../index.js',
       query: JSON.stringify(safeExternals)
     }]
