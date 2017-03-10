@@ -7,8 +7,11 @@ describe('Safe Externals Loader', () => {
   beforeEach(function () {
     webpackLoaderApiMock = {
       cacheable: () => {},
-      _module: { userRequest: 'foo', reasons: [], resource: 'bar' },
-      query: '?' + JSON.stringify({jquery: ['jQuery']})
+      _module: { rawRequest: './foo.js' },
+      query: '?' + JSON.stringify({jquery: ['jQuery']}),
+      options: {
+        entry: './baz.js'
+      }
     };
   });
 
@@ -56,15 +59,12 @@ describe('Safe Externals Loader', () => {
   });
 
   describe('imports on the entry file', () => {
+    const fixture = "console.log('foo');";
+    beforeEach(() => {
+      webpackLoaderApiMock.options.entry = './foo.js';
+    });
+
     it('adds imports to an external if it is not available', () => {
-      const fixture = "console.log('foo');";
-      webpackLoaderApiMock._module.userRequest = 'index';
-      webpackLoaderApiMock._module.reasons = [{
-        module: {
-          reasons: [],
-          resource: 'index'
-        }
-      }];
       const expected = `
         var imports = [];
         if (!(window['jQuery'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));
@@ -78,14 +78,6 @@ describe('Safe Externals Loader', () => {
     });
 
     it('adds imports to multiple externals if they are not available', () => {
-      const fixture = "console.log('foo');";
-      webpackLoaderApiMock._module.userRequest = 'index';
-      webpackLoaderApiMock._module.reasons = [{
-        module: {
-          reasons: [],
-          resource: 'index'
-        }
-      }];
       webpackLoaderApiMock.query = '?' + JSON.stringify({
         jquery: ['jQuery'],
         react: ['react']
@@ -104,14 +96,6 @@ describe('Safe Externals Loader', () => {
     });
 
     it('adds imports to multiple externals if they are not available in multiple window names', () => {
-      const fixture = "console.log('foo');";
-      webpackLoaderApiMock._module.userRequest = 'index';
-      webpackLoaderApiMock._module.reasons = [{
-        module: {
-          reasons: [],
-          resource: 'index'
-        }
-      }];
       webpackLoaderApiMock.query = '?' + JSON.stringify({
         jquery: ['jQuery', '$'],
         react: ['react']
@@ -129,15 +113,8 @@ describe('Safe Externals Loader', () => {
       expect(jsBeautify(result)).to.equal(jsBeautify(expected));
     });
 
-    it('founds the correct entry point when last reason does not have a resource, this happens when a entry point has multiple files', () => {
-      const fixture = "console.log('foo');";
-      webpackLoaderApiMock._module.userRequest = 'index';
-      webpackLoaderApiMock._module.reasons = [{
-        module: {
-          reasons: []
-        }
-      }];
-      webpackLoaderApiMock._module.resource = 'index';
+    it('process corrently for entry point for entry points with multiple files', () => {
+      webpackLoaderApiMock.options.entry = ['./foo.js', './bar.js'];
       const expected = `
         var imports = [];
         if (!(window['jQuery'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));

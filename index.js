@@ -4,7 +4,7 @@ module.exports = function (source) {
   this.cacheable();
 
   var externals = JSON.parse(this.query.split('?')[1]);
-  var isTheEntryPoint = this._module.userRequest === findEntry(this._module);
+  var isTheEntryPoint = this.options.entry.indexOf(this._module.rawRequest) !== -1;
 
   var updatedSource = replaceRequiresWithGlobals(externals, source);
 
@@ -12,13 +12,6 @@ module.exports = function (source) {
     return addExternalRequires(externals, updatedSource);
   }
   return updatedSource;
-};
-
-var findEntry = function (module, previous) {
-  if (module.reasons.length > 0) {
-    return findEntry(module.reasons[0].module, module);
-  }
-  return module.resource;
 };
 
 var replaceRequiresWithGlobals = function (externals, source) {
