@@ -128,5 +128,26 @@ describe('Safe Externals Loader', () => {
 
       expect(jsBeautify(result)).to.equal(jsBeautify(expected));
     });
+
+    it('founds the correct entry point when last reason does not have a resource, this happens when a entry point has multiple files', () => {
+      const fixture = "console.log('foo');";
+      webpackLoaderApiMock._module.userRequest = 'index';
+      webpackLoaderApiMock._module.reasons = [{
+        module: {
+          reasons: []
+        }
+      }];
+      webpackLoaderApiMock._module.resource = 'index';
+      const expected = `
+        var imports = [];
+        if (!(window['jQuery'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));
+        Promise.all(imports).then(function () {
+          console.log('foo');
+        });
+      `;
+      const result = loader.call(webpackLoaderApiMock, fixture);
+
+      expect(jsBeautify(result)).to.equal(jsBeautify(expected));
+    });
   });
 });

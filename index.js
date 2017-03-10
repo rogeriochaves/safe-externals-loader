@@ -14,9 +14,9 @@ module.exports = function (source) {
   return updatedSource;
 };
 
-var findEntry = function (module) {
+var findEntry = function (module, previous) {
   if (module.reasons.length > 0) {
-    return findEntry(module.reasons[0].module);
+    return findEntry(module.reasons[0].module, module);
   }
   return module.resource;
 };
