@@ -49,11 +49,12 @@ var createImports = function (externals) {
     return "\
       if (!("+ windowRequires +")) \
         imports.push( \
-          System.import('" + external + "').then( \
-            function (result) { \
+          new Promise(function(resolve, reject) { \
+            require(['" + external + "'], function (result) { \
               " + windowSets + "; \
-            } \
-          ) \
+              resolve(); \
+            }); \
+          }) \
         ); \
     "
   }).join('\n');

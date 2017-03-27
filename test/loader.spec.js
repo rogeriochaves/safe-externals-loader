@@ -67,7 +67,7 @@ describe('Safe Externals Loader', () => {
     it('adds imports to an external if it is not available', () => {
       const expected = `
         var imports = [];
-        if (!(window['jQuery'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));
+        if (!(window['jQuery'])) imports.push(new Promise(function(resolve, reject) { require(['jquery'], function(result) { window['jQuery'] = result; resolve(); }); }));
         Promise.all(imports).then(function () {
           console.log('foo');
         });
@@ -84,8 +84,8 @@ describe('Safe Externals Loader', () => {
       });
       const expected = `
         var imports = [];
-        if (!(window['jQuery'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));
-        if (!(window['react'])) imports.push(System.import('react').then(function (result) { window['react'] = result; }));
+        if (!(window['jQuery'])) imports.push(new Promise(function(resolve, reject) { require(['jquery'], function(result) { window['jQuery'] = result; resolve(); }); }));
+        if (!(window['react'])) imports.push(new Promise(function(resolve, reject) { require(['react'], function(result) { window['react'] = result; resolve(); }); }));
         Promise.all(imports).then(function () {
           console.log('foo');
         });
@@ -102,8 +102,8 @@ describe('Safe Externals Loader', () => {
       });
       const expected = `
         var imports = [];
-        if (!(window['jQuery'] || window['$'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; window['$'] = result; }));
-        if (!(window['react'])) imports.push(System.import('react').then(function (result) { window['react'] = result; }));
+        if (!(window['jQuery'] || window['$'])) imports.push(new Promise(function(resolve, reject) { require(['jquery'], function(result) { window['jQuery'] = result; window['$'] = result; resolve(); }); }));
+        if (!(window['react'])) imports.push(new Promise(function(resolve, reject) { require(['react'], function(result) { window['react'] = result; resolve(); }); }));
         Promise.all(imports).then(function () {
           console.log('foo');
         });
@@ -117,7 +117,7 @@ describe('Safe Externals Loader', () => {
       webpackLoaderApiMock.options.entry = ['./foo.js', './bar.js'];
       const expected = `
         var imports = [];
-        if (!(window['jQuery'])) imports.push(System.import('jquery').then(function (result) { window['jQuery'] = result; }));
+        if (!(window['jQuery'])) imports.push(new Promise(function(resolve, reject) { require(['jquery'], function(result) { window['jQuery'] = result; resolve(); }); }));
         Promise.all(imports).then(function () {
           console.log('foo');
         });
